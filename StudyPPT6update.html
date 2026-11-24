@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>汉语口语自习复习工作坊 - 旅游主题</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .animate-fade-in {
+      animation: fadeIn 0.3s ease-out forwards;
+    }
+    @keyframes spinSlow {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+    .animate-spin-slow {
+      animation: spinSlow 16s linear infinite;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const { useState, useEffect, useRef } = React;
+
+    function LucideIcon({ name, className = "w-5 h-5" }) {
+      const iconRef = useRef(null);
+      useEffect(() => {
+        if (iconRef.current && window.lucide) {
+          iconRef.current.innerHTML = `<i data-lucide="${name}" class="${className}"></i>`;
+          window.lucide.createIcons({ root: iconRef.current });
+        }
+      }, [name, className]);
+      return <span ref={iconRef} className="inline-flex items-center justify-center" />;
+    }
+
+    const BookOpen = (props) => <LucideIcon name="book-open" {...props} />;
+    const MapPin = (props) => <LucideIcon name="map-pin" {...props} />;
+    const Sparkles = (props) => <LucideIcon name="sparkles" {...props} />;
+    const MessageSquare = (props) => <LucideIcon name="message-square" {...props} />;
+    const PenTool = (props) => <LucideIcon name="pen-tool" {...props} />;
+    const CheckCircle2 = (props) => <LucideIcon name="check-circle-2" {...props} />;
+    const Volume2 = (props) => <LucideIcon name="volume-2" {...props} />;
+    const Compass = (props) => <LucideIcon name="compass" {...props} />;
+    const Award = (props) => <LucideIcon name="award" {...props} />;
+    const ChevronRight = (props) => <LucideIcon name="chevron-right" {...props} />;
+    const HelpCircle = (props) => <LucideIcon name="help-circle" {...props} />;
+    const Train = (props) => <LucideIcon name="train" {...props} />;
+    const Home = (props) => <LucideIcon name="home" {...props} />;
+    const Check = (props) => <LucideIcon name="check" {...props} />;
+    const RefreshCw = (props) => <LucideIcon name="refresh-cw" {...props} />;
+    const Eye = (props) => <LucideIcon name="eye" {...props} />;
+    const EyeOff = (props) => <LucideIcon name="eye-off" {...props} />;
+
+    const GRAMMAR_POINTS = [
+      {
+        id: 'question-dou',
+        title: '疑问代词 + 就 + 疑问代词',
+        pinyin: 'Yíwèn dàící + jiù + yíwèn dàící',
+        meaning: "Doing something according to one's own preference / Any choice (Arbitrary reference)",
+        pattern: 'Subject + 想/爱/喜欢 + 疑问词 + 就 + 疑问词',
+        examples: [
+          { ch: '你想吃什么就吃什么。', py: 'Nǐ xiǎng chī shénme jiù chī shénme.', en: 'Eat whatever you want to eat.' },
+          { ch: '哪儿好玩就去哪儿。', py: 'Nǎr hǎowán jiù qù nǎr.', en: 'Go wherever it is fun.' },
+          { ch: '怎么方便我们就怎么去。', py: 'Zěnme fāngbiàn wǒmen jiù zěnme qù.', en: 'We will go by whichever way is most convenient.' }
+        ],
+        exercise: {
+          question: 'A: 去那个地方可以坐火车、坐汽车、坐船。你想怎么去？\nB: _____ (坐车最快)',
+          options: ['怎么快就怎么去', '想怎么去就怎么去', '坐什么车就去什么', '哪儿快就去哪儿'],
+          answer: 0
+        }
+      },
+      {
+        id: 'xiang-vp',
+        title: '想 VP1 就 VP1，想 VP2 就 VP2',
+        pinyin: 'Xiǎng VP1 jiù VP1, xiǎng VP2 jiù VP2',
+        meaning: 'Complete freedom or flexibility in choosing actions ("My rules!")',
+        pattern: '想 [动作1] 就 [动作1]，想 [动作2] 就 [动作2]',
+        examples: [
+          { ch: '在这里，你想爬山就爬山，想游泳就游泳！', py: 'Zài zhèlǐ, nǐ xiǎng páshān jiù páshān, xiǎng yóuyǒng jiù yóuyǒng!', en: 'Here, you can hike or swim whenever you feel like it!' },
+          { ch: '周末我想看书就看书，想看电影就看电影。', py: 'Zhōumò wǒ xiǎng kànshū jiù kànshū, xiǎng kàn diànyǐng jiù kàn diànyǐng.', en: 'On weekends, I read books or watch movies as I please.' }
+        ],
+        exercise: {
+          question: '填空：飞机票和高铁票都不贵，____。',
+          options: ['想坐飞机就坐飞机，想坐高铁就坐高铁', '坐飞机就坐高铁', '想去哪儿就去哪儿', '又坐飞机又坐高铁'],
+          answer: 0
+        }
+      },
+      {
+        id: 'a-jiu-a-ba',
+        title: 'A 就 A 吧',
+        pinyin: 'A jiù A ba',
+        meaning: 'Reluctantly accepting a situation ("Fine, let it be A, then...")',
+        pattern: '形容词/动词 + 就 + 形容词/动词 + 吧',
+        examples: [
+          { ch: '不方便就不方便吧，能体验当地的生活就行。', py: "Bù fāngbiàn jiù bù fāngbiàn ba, néng tǐyàn dāngdì de shēnghuó jiù xíng.", en: "If it's inconvenient, so be it, as long as we can experience local life." },
+          { ch: '贵就贵吧，好喝就行。', py: 'Guì jiù guì ba, hǎohē jiù xíng.', en: 'Expensive or not, as long as it tastes good.' }
+        ],
+        exercise: {
+          question: 'A: 排队的人这么多，看来要等很久。\nB: _____，能买到票就行。',
+          options: ['等就等吧', '排队就排队吧', '久就久吧', '多就多吧'],
+          answer: 2
+        }
+      },
+      {
+        id: 'bude-bu',
+        title: '不得不 + VP',
+        pinyin: 'Bùdébù + VP',
+        meaning: 'Have no choice but to do something (objective necessity)',
+        pattern: '主语 + 不得不 + 动词短语',
+        examples: [
+          { ch: '下雨了，我们不得不待在家里。', py: 'Xiàyǔ le, wǒmen bùdébù dāi zài jiālǐ.', en: 'It is raining, so we have no choice but to stay home.' },
+          { ch: '没有别的店，我不得不在这里买。', py: 'Méiyǒu bié de diàn, wǒ bùdébù zài zhèlǐ mǎi.', en: 'There are no other shops, so I have to buy it here.' }
+        ],
+        exercise: {
+          question: '工作还没做完，我今天晚上_____加班。',
+          options: ['不得不', '就', '简直', '幸亏'],
+          answer: 0
+        }
+      },
+      {
+        id: 'jianzhi',
+        title: '简直……',
+        pinyin: 'Jiǎnzhí...',
+        meaning: 'Simply / Utterly / Virtually (Used for strong emphasis or exaggeration)',
+        pattern: '简直 + 太 [形容词] 了 / 简直 + 是 [名词]',
+        examples: [
+          { ch: '你简直就是个“中国通”！', py: 'Nǐ jiǎnzhí jiùshì gè "Zhōngguótōng"!', en: 'You are simply a China expert!' },
+          { ch: '这家民宿环境太好了，这里简直是天堂！', py: 'Zhè jiā mínsù huánjìng tài hǎo le, zhèlǐ jiǎnzhí shì tiāntáng!', en: 'This guesthouse is amazing, it is simply paradise!' }
+        ],
+        exercise: {
+          question: '你怎么能这样对长辈说话？_____太没有礼貌了！',
+          options: ['幸亏', '不得不', '简直', '赶快'],
+          answer: 2
+        }
+      },
+      {
+        id: 'xingkui',
+        title: '幸亏……(才/不然)',
+        pinyin: 'Xìngkuī... (cái / bùrán)',
+        meaning: 'Fortunately / Luckily (prevented a bad result)',
+        pattern: '幸亏 A，才 B (好结果) / 幸亏 A，不然 B (坏结果)',
+        examples: [
+          { ch: '幸亏听了你的话，我直到现在才放心。', py: 'Xìngkuī tīng le nǐ de huà, wǒ zhídào xiànzài cái fàngxīn.', en: 'Fortunately I listened to you, only now am I relieved.' },
+          { ch: '幸亏带了雨伞，不然就被淋湿了。', py: 'Xìngkuī dài le yǔsǎn, bùrán jiù bèi línshī le.', en: 'Luckily I brought an umbrella, otherwise I would have been soaked.' }
+        ],
+        exercise: {
+          question: '_____今天地铁很快，不然我就迟到了。',
+          options: ['不得不', '幸亏', '简直', '赶快'],
+          answer: 1
+        }
+      },
+      {
+        id: 'gankuai',
+        title: '赶快 + VP',
+        pinyin: 'Gǎnkuài + VP',
+        meaning: 'Hurry up and do something / Immediately',
+        pattern: '赶快 + 动词短语',
+        examples: [
+          { ch: '电影要开始了，我们赶快走吧！', py: "Diànyǐng yào kāishǐ le, wǒmen gǎnkuài zǒu ba!", en: "The movie is starting, let's hurry up!" },
+          { ch: '我得赶快办签证。', py: 'Wǒ děi gǎnkuài bàn qiānzhèng.', en: 'I must hurry up and apply for a visa.' }
+        ],
+        exercise: {
+          question: '下大雨了，大家_____进屋躲雨！',
+          options: ['简直', '不得不', '赶快', '幸亏'],
+          answer: 2
+        }
+      }
+    ];
+
+    const CITIES_AND_SAYINGS = [
+      {
+        city: '杭州与苏州',
+        pinyin: 'Hángzhōu & Sūzhōu',
+        saying: '上有天堂，下有苏杭。',
+        sayingPinyin: 'Shàng yǒu tiāntáng, xià yǒu Sū Háng.',
+        meaning: 'Up above there is heaven; down below there are Suzhou and Hangzhou.',
+        features: ['西湖 (West Lake)', '江南水乡 (Water Towns)', '龙井茶 (Longjing Tea)'],
+        bg: 'from-emerald-500 to-teal-700',
+        icon: '🏞️'
+      },
+      {
+        city: '桂林',
+        pinyin: 'Guìlín',
+        saying: '桂林山水甲天下。',
+        sayingPinyin: 'Guìlín shānshuǐ jiǎ tiānxià.',
+        meaning: "Guilin's scenery of hills and waters ranks top in the world.",
+        features: ['自然风景 (Natural Scenery)', '漓江 (Li River)', '竹筏 (Bamboo Raft)'],
+        bg: 'from-cyan-500 to-blue-700',
+        icon: '⛰️'
+      },
+      {
+        city: '北京',
+        pinyin: 'Běijīng',
+        saying: '不到长城非好汉。',
+        sayingPinyin: 'Bú dào Chángchéng fēi hǎohàn.',
+        meaning: 'He who has never been to the Great Wall is not a true hero.',
+        features: ['首都 (Capital)', '名胜古迹 (Historic Sites: 故宫/长城)', '北京烤鸭 (Peking Duck)'],
+        bg: 'from-red-500 to-amber-700',
+        icon: '🏯'
+      },
+      {
+        city: '西安',
+        pinyin: "Xī'ān",
+        saying: '十三朝古都，历史悠久。',
+        sayingPinyin: 'Shísān cháo gǔdōu, lìshǐ yōujiǔ.',
+        meaning: 'Ancient capital of 13 dynasties with rich historic heritage.',
+        features: ['兵马俑 (Terracotta Warriors)', '古城墙 (Ancient City Wall)', '肉夹馍 (Chinese Burger)'],
+        bg: 'from-orange-500 to-yellow-700',
+        icon: '🗿'
+      },
+      {
+        city: '成都 & 重庆',
+        pinyin: 'Chéngdū & Chóngqìng',
+        saying: '天府之国，美食之都。',
+        sayingPinyin: 'Tiānfǔ zhī guó, měishí zhī dū.',
+        meaning: 'Land of Abundance, capital of spicy gastronomy.',
+        features: ['大熊猫 (Giant Pandas)', '四川火锅 (Hotpot)', '休闲生活 (Relaxed Lifestyle)'],
+        bg: 'from-rose-500 to-red-700',
+        icon: '🐼'
+      },
+      {
+        city: '西双版纳',
+        pinyin: 'Xīshuāngbǎnnà',
+        saying: '理想而神奇的乐土。',
+        sayingPinyin: 'Lǐxiǎng ér shénqí de lètǔ.',
+        meaning: 'An ideal and magical tropical paradise.',
+        features: ['民族风情 (Dai Culture)', '特色民居 (Traditional Stilt Houses)', '热带雨林 (Rainforest)'],
+        bg: 'from-lime-600 to-green-800',
+        icon: '🌴'
+      }
+    ];
+
+    const COURSE_TEXTS = [
+      {
+        id: 1,
+        title: '课文一：讨论“跟团游 vs 自助游”',
+        pinyinTitle: 'Kèwén yī: Tǎolùn "gēntuányóu vs zìzhùyóu"',
+        speaker: '大卫 & 田芳',
+        content: [
+          { speaker: '田芳', ch: '大卫，暑假你打算去哪儿旅行？', py: 'Dàwèi, shǔjià nǐ dǎsuàn qù nǎr lǚxíng?', en: 'David, where do you plan to travel this summer break?' },
+          { speaker: '大卫', ch: '我打算去西安和桂林。这是我第一次在中国自助游。', py: "Wǒ dǎsuàn qù Xī'ān hé Guìlín. Zhè shì wǒ dì-yī cì zài Zhōngguó zìzhùyóu.", en: "I plan to go to Xi'an and Guilin. This is my first time traveling independently in China." },
+          { speaker: '田芳', ch: '自助游？你自己一个人不觉得麻烦吗？跟团游多方便啊，旅行社会安排好一切。', py: "Zìzhùyóu? Nǐ zìjǐ yī gè rén bù juéde máfan ma? Gēntuányóu duō fāngbiàn a, lǚxíngshè huì ānpái hǎo yīqiè.", en: "Self-guided tour? Don't you think it's troublesome by yourself? Package tours are so convenient, agencies arrange everything." },
+          { speaker: '大卫', ch: '我不喜欢跟团游。跟团游太不自由了。我自己旅行，想去哪儿就去哪儿，想在一个地方玩儿多长时间就玩儿多长时间！', py: "Wǒ bù xǐhuan gēntuányóu. Gēntuányóu tài bù zìyóu le. Wǒ zìjǐ lǚxíng, xiǎng qù nǎr jiù qù nǎr, xiǎng zài yī gè dìfang wánr duō cháng shíjiān jiù wánr duō cháng shíjiān!", en: "I don't like package tours. They lack freedom. When I travel by myself, I go wherever I want and stay as long as I want!" },
+          { speaker: '田芳', ch: '不过，听说自助游有时候花钱更多呢。你得注意安全！', py: "Búguò, tīngshuō zìzhùyóu yǒu shíhou huā qián gèng duō ne. Nǐ děi zhùyì ānquán!", en: "However, I heard self-guided tours sometimes cost more money. You must pay attention to safety!" }
+        ]
+      },
+      {
+        id: 2,
+        title: '课文二：在网上商量订住宿',
+        pinyinTitle: 'Kèwén èr: Zài wǎngshang shāngliang dìng zhùsù',
+        speaker: '小林 & 马克',
+        content: [
+          { speaker: '小林', ch: '马克，这个季节是西双版纳的旅游旺季，我们最好提前订好酒店。', py: 'Mǎkè, zhè gè jìjié shì Xīshuāngbǎnnà de lǚyóu wàngjì, wǒmen zuìhǎo tíqián dìng hǎo jiǔdiàn.', en: 'Mark, this season is peak travel time in Xishuangbanna. We had better book hotels in advance.' },
+          { speaker: '马克', ch: '行。网上的攻略说有个叫“十一家房客”的民宿不错，建筑有一百年历史了。我想住民宿，可以更多地体验当地生活。', py: 'Xíng. Wǎngshang de gōnglüè shuō yǒu gè jiào "Shíyī Jiā Fángkè" de mínsù búcuò, jiànzhù yǒu yìbǎi nián lìshǐ le. Wǒ xiǎng zhù mínsù, kěyǐ gèng duō de tǐyàn dāngdì shēnghuó.', en: 'Okay. Online travel guides say a homestay called "Eleven Tenants" is nice—it\'s 100 years old. I want to stay at a homestay to experience local life.' },
+          { speaker: '小林', ch: '这家民居没有叫早和洗衣服务，还要自己准备洗漱用具，没有酒店方便。', py: "Zhè jiā mínsù méiyǒu jiàozǎo hé xǐyī fúwù, hái yào zìjǐ zhǔnbèi xǐshù yòngjù, méiyǒu jiǔdiàn fāngbiàn.", en: "This homestay lacks wake-up and laundry services, and we have to bring toiletries. It's not as convenient as hotels." },
+          { speaker: '马克', ch: '不方便就不方便吧，能体验当地的生活就行！', py: "Bù fāngbiàn jiù bù fāngbiàn ba, néng tǐyàn dāngdì de shēnghuó jiù xíng!", en: "If it's inconvenient, so be it, as long as we can experience local life!" }
+        ]
+      },
+      {
+        id: 3,
+        title: '课文三：到达西双版纳民居',
+        pinyinTitle: 'Kèwén sān: Dàodá Xīshuāngbǎnnà mínsù',
+        speaker: '马克 & 小林',
+        content: [
+          { speaker: '马克', ch: '小林，这家民居简直太棒了！住在这里，就跟回到了一百年前一样。', py: 'Xiǎolín, zhè jiā mínsù jiǎnzhí tài bàng le! Zhù zài zhèlǐ, jiù gēn huídào le yìbǎi nián qián yíyàng.', en: 'Xiaolin, this homestay is simply amazing! Staying here feels like going back 100 years in time.' },
+          { speaker: '小林', ch: '是啊，幸亏听了你的话，我在路上还一直担心呢！', py: 'Shì a, xìngkuī tīng le nǐ de huà, wǒ zài lùshang hái yìzhí dānxīn ne!', en: 'Yeah! Luckily I listened to you; I was worrying all along the way!' },
+          { speaker: '马克', ch: '你应该相信我，我的旅游经验可丰富了。', py: 'Nǐ yīnggāi xiāngxìn wǒ, wǒ de lǚyóu jīngyàn kě fēngfù le.', en: 'You should trust me, my travel experience is quite rich.' },
+          { speaker: '小林', ch: '看出来了，你简直就是个“中国通”，我太佩服你了！', py: 'Kàn chūlái le, nǐ jiǎnzhí jiùshì gè "Zhōngguótōng", wǒ tài pèifú nǐ le!', en: 'I can tell! You are simply a China expert, I admire you so much!' }
+        ]
+      },
+      {
+        id: 4,
+        title: '课文四：暑假旅行计划交流',
+        pinyinTitle: 'Kèwén sì: Shǔjià lǚxíng jìhuà jiāoliú',
+        speaker: '王朋 & 李友',
+        content: [
+          { speaker: '王朋', ch: '李友，马上就要放假了。有的同学去暑期班，有的去实习，有的打工。你有什么计划？', py: "Lǐ Yǒu, mǎshàng jiù yào fàngjià le. Yǒu de tóngxué qù shǔqībān, yǒu de qù shíxí, yǒu de dǎgōng. Nǐ yǒu shénme jìhuà?", en: "Li You, vacation is starting soon. Some classmates take summer classes, some do internships, some work. What's your plan?" },
+          { speaker: '李友', ch: '我还没想好呢。你呢，王朋？', py: "Wǒ hái méi xiǎng hǎo ne. Nǐ ne, Wáng Péng?", en: "I haven't decided yet. What about you, Wang Peng?" },
+          { speaker: '王朋', ch: '我暑假打算回北京去看父母。北京是中国的首都，也是政治、文化中心，名胜古迹多得不得了！', py: "Wǒ shǔjià dǎsuàn huí Běijīng qù kàn fùmǔ. Běijīng shì Zhōngguó de shǒudū, yě shì zhèngzhì, wénhuà zhōngxīn, míngshèng gǔjì duō de bùdéliǎo!", en: "I plan to return to Beijing to visit my parents. Beijing is China's capital, political/cultural center, with immensely many historical sites!" },
+          { speaker: '李友', ch: '真的吗？要是能去北京就好了！', py: 'Zhēn de ma? Yàoshi néng qù Běijīng jiù hǎo le!', en: 'Really? If only I could go to Beijing!' },
+          { speaker: '王朋', ch: '那你跟我一起去吧，我当你的导游！', py: "Nà nǐ gēn wǒ yìqǐ qù ba, wǒ dāng nǐ de dǎoyóu!", en: "Then come with me, I'll be your tour guide!" },
+          { speaker: '李友', ch: '太好了！我得赶快去办签证！', py: 'Tài hǎo le! Wǒ děi gǎnkuài qù bàn qiānzhèng!', en: 'Wonderful! I must hurry up and apply for a visa!' }
+        ]
+      }
+    ];
+
+    const SCENARIOS = [
+      {
+        id: 'travel-style',
+        title: '情景一：旅行顾问大比拼 (Tour Style Consult)',
+        description: '匹配最适合客户的旅行方式（跟团游 vs 自助游）',
+        icon: Compass,
+        cases: [
+          {
+            user: '70岁老爷爷 (70yo Grandpa)',
+            desc: '“我年纪大了，腿脚不方便，第一次去中国，不想太累。”',
+            recommendation: '跟团游 (Package Tour)',
+            reason: '不用自己找路、订车，有导游全程照顾，省心安全。'
+          },
+          {
+            user: '20岁大学生 (20yo Student)',
+            desc: '“我是学生，钱不多，但我很喜欢冒险，想交中国朋友。”',
+            recommendation: '自助游 (Independent Travel)',
+            reason: '行程自由，想去哪儿就去哪儿，住青年旅舍，省钱又能交朋友。'
+          },
+          {
+            user: '带5岁小孩的妈妈 (Mother with Kid)',
+            desc: '“我第一次来中国，带着孩子，怕麻烦，想安全舒适一点。”',
+            recommendation: '跟团游 / 定制私家团',
+            reason: '行程稳定，不用频繁倒车，有紧急支援与保障。'
+          }
+        ]
+      },
+      {
+        id: 'transport',
+        title: '情景二：交通与座位选择 (Transport & Seats)',
+        description: '乘坐高铁或飞机时的需求表达',
+        icon: Train,
+        cases: [
+          {
+            user: '喜欢安静看风景的乘客',
+            desc: '“我喜欢看窗外的风景，而且不想被走动的人打扰。”',
+            recommendation: '靠窗的位子 (Window Seat)',
+            reason: '安静，可以看风景，不会被去卫生间的人打扰。'
+          },
+          {
+            user: '频繁去洗手间的乘客',
+            desc: '“我喝水多，喜欢活动，不想打扰别人。”',
+            recommendation: '靠走道的位子 (Aisle Seat)',
+            reason: '进出方便，去卫生间不会影响邻座。'
+          },
+          {
+            user: '商务人士 vs 预算有限学生',
+            desc: '商务人士要赶时间休息；学生想省钱。',
+            recommendation: '商务座/一等座 vs 二等座/硬座',
+            reason: '高铁商务座安静舒服；二等座经济实惠。'
+          }
+        ]
+      },
+      {
+        id: 'accommodation',
+        title: '情景三：预订住宿大比拼 (Hotel Booking)',
+        description: '选择最契合需要的住宿类型',
+        icon: Home,
+        cases: [
+          {
+            type: '特色民宿 (Homestay / B&B)',
+            feature: '百年建筑、体验当地生活、拍照好看',
+            suitable: '网红博主、深度体验型游客',
+            quote: '“不方便就不方便吧，能体验当地生活就行。”'
+          },
+          {
+            type: '快捷酒店 (Budget Hotel)',
+            feature: '干净卫生、快速入住、经济实惠',
+            suitable: '出差商务客、背包客',
+            quote: '“只要干净方便、便宜就行。”'
+          },
+          {
+            type: '星级大酒店 (Luxury Hotel)',
+            feature: '游泳池、叫早、洗衣服务、豪华舒服',
+            suitable: '带孩子家庭、高端度假人群',
+            quote: '“我们要住得舒服，服务齐全。”'
+          }
+        ]
+      }
+    ];
+
+    function App() {
+      const [activeTab, setActiveTab] = useState('overview');
+      const [completedGrammar, setCompletedGrammar] = useState([]);
+
+      const toggleGrammarComplete = (id) => {
+        if (completedGrammar.includes(id)) {
+          setCompletedGrammar(completedGrammar.filter(g => g !== id));
+        } else {
+          setCompletedGrammar([...completedGrammar, id]);
+        }
+      };
+
+      return (
+        <div className="min-h-screen bg-slate-50 text-slate-800 font-sans flex flex-col">
+          <header className="bg-gradient-to-r from-blue-700 via-indigo-700 to-teal-600 text-white shadow-lg sticky top-0 z-50">
+            <div className="max-w-7xl mx-auto px-4 py-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row justify-between items-center gap-3">
+              <div className="flex items-center space-x-3">
+                <div className="bg-white/20 p-2.5 rounded-xl backdrop-blur-md">
+                  <Compass className="w-8 h-8 text-yellow-300 animate-spin-slow" />
+                </div>
+                <div>
+                  <h1 className="text-xl sm:text-2xl font-bold tracking-wide">汉语口语自习复习工作坊</h1>
+                  <p className="text-xs sm:text-sm text-blue-100 font-light">
+                    主题：旅游——去哪里？怎么去？跟团游还是自助游？
+                  </p>
+                </div>
+              </div>
+
+              <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-xl border border-white/20 flex items-center space-x-4 text-xs sm:text-sm">
+                <div>
+                  <span className="text-blue-200">语法掌握: </span>
+                  <span className="font-bold text-yellow-300">{completedGrammar.length} / {GRAMMAR_POINTS.length}</span>
+                </div>
+                <div className="w-20 bg-blue-900/50 rounded-full h-2.5 overflow-hidden">
+                  <div 
+                    className="bg-yellow-400 h-2.5 rounded-full transition-all duration-500" 
+                    style={{ width: `${(completedGrammar.length / GRAMMAR_POINTS.length) * 100}%` }}
+                  ></div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-blue-900/40 border-t border-white/10 backdrop-blur-sm">
+              <div className="max-w-7xl mx-auto px-2 sm:px-6 flex overflow-x-auto no-scrollbar">
+                {[
+                  { id: 'overview', label: '课程概览', icon: BookOpen },
+                  { id: 'grammar', label: '核心句型与语法', icon: Sparkles },
+                  { id: 'culture', label: '中国名胜与俗语', icon: MapPin },
+                  { id: 'scenarios', label: '情景口语模拟', icon: MessageSquare },
+                  { id: 'texts', label: '课文自读', icon: Volume2 },
+                  { id: 'workshop', label: '写作与复习工坊', icon: PenTool },
+                ].map(tab => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center space-x-2 px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-all ${
+                        isActive
+                          ? 'border-yellow-400 text-yellow-300 bg-white/10'
+                          : 'border-transparent text-blue-100 hover:text-white hover:bg-white/5'
+                      }`}
+                    >
+                      <Icon className="w-4 h-4" />
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+          </header>
+
+          <main className="flex-1 max-w-7xl w-full mx-auto p-4 sm:p-6 lg:p-8">
+            {activeTab === 'overview' && <OverviewTab onNavigate={setActiveTab} />}
+            {activeTab === 'grammar' && (
+              <GrammarTab 
+                completed={completedGrammar} 
+                onToggleComplete={toggleGrammarComplete} 
+              />
+            )}
+            {activeTab === 'culture' && <CultureTab />}
+            {activeTab === 'scenarios' && <ScenariosTab />}
+            {activeTab === 'texts' && <TextsTab />}
+            {activeTab === 'workshop' && <WorkshopTab />}
+          </main>
+
+          <footer className="bg-slate-800 text-slate-400 py-6 border-t border-slate-700 mt-8">
+            <div className="max-w-7xl mx-auto px-4 text-center text-sm">
+              <p>汉语口语课程自习互动系统 · 基于 PPT 教学内容系统化整理构建</p>
+              <p className="text-xs text-slate-500 mt-1">涵盖：核心词汇 · 7大重要口语语法 · 景点名言 · 情景实操 · 课文朗读与故事改写</p>
+            </div>
+          </footer>
+        </div>
+      );
+    }
+
+    function OverviewTab({ onNavigate }) {
+      return (
+        <div className="space-y-8 animate-fade-in">
+          <div className="bg-gradient-to-r from-teal-600 to-indigo-700 text-white rounded-3xl p-6 sm:p-8 shadow-xl relative overflow-hidden">
+            <div className="absolute right-0 top-0 opacity-10 transform translate-x-10 -translate-y-10">
+              <Compass className="w-96 h-96" />
+            </div>
+            <div className="relative z-10 max-w-2xl">
+              <span className="inline-block px-3 py-1 bg-yellow-400 text-slate-900 rounded-full text-xs font-bold uppercase tracking-wider mb-3">
+                口语自习指南
+              </span>
+              <h2 className="text-2xl sm:text-4xl font-extrabold mb-3">
+                单元主题：旅游 (Travel)
+              </h2>
+              <p className="text-blue-100 text-sm sm:text-base leading-relaxed mb-6">
+                本课程围绕“去哪儿？怎么去？跟团游还是自助游？”展开。通过系统梳理，本应用帮助你系统掌握中国旅游常识、交通住宿表达、7大高频口语语法及写作提升技巧。
+              </p>
+              <div className="flex flex-wrap gap-3">
+                <button 
+                  onClick={() => onNavigate('grammar')}
+                  className="px-5 py-2.5 bg-yellow-400 hover:bg-yellow-300 text-slate-900 font-bold rounded-xl text-sm shadow-md transition flex items-center space-x-2"
+                >
+                  <span>开始语法特训</span>
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+                <button 
+                  onClick={() => onNavigate('scenarios')}
+                  className="px-5 py-2.5 bg-white/20 hover:bg-white/30 text-white font-medium rounded-xl text-sm backdrop-blur-md transition"
+                >
+                  情景口语演练
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-bold text-slate-800 mb-4 flex items-center space-x-2">
+              <Award className="w-6 h-6 text-indigo-600" />
+              <span>学习目标与能力维度</span>
+            </h3>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                <div className="w-10 h-10 rounded-xl bg-blue-100 text-blue-600 flex items-center justify-center font-bold text-lg mb-3">🗣️</div>
+                <h4 className="font-bold text-slate-800 mb-2">1. 核心词汇与文化</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  掌握著名城市（北京、杭州、桂林、西双版纳）及文化名言（“上有天堂，下有苏杭”、“不到长城非好汉”）。
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                <div className="w-10 h-10 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center font-bold text-lg mb-3">⚡</div>
+                <h4 className="font-bold text-slate-800 mb-2">2. 7大高频口语句型</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  灵活运用 <code>疑问词+就+疑问词</code>、<code>想VP1就VP1</code>、<code>A就A吧</code>、<code>不得不</code>、<code>简直</code>、<code>幸亏</code> 及 <code>赶快</code>。
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                <div className="w-10 h-10 rounded-xl bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold text-lg mb-3">🧳</div>
+                <h4 className="font-bold text-slate-800 mb-2">3. 真实旅游场景交际</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  学会辩论“跟团游 vs 自助游”，选择网约车/高铁座位，预订民宿或快捷酒店。
+                </p>
+              </div>
+
+              <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm hover:shadow-md transition">
+                <div className="w-10 h-10 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center font-bold text-lg mb-3">✍️</div>
+                <h4 className="font-bold text-slate-800 mb-2">4. 叙事与写作进阶</h4>
+                <p className="text-xs text-slate-600 leading-relaxed">
+                  掌握“从对话改写为连贯故事”的技巧，学会使用情绪词和逻辑连接词完成 200 字旅行计划。
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+            <h3 className="text-lg font-bold text-slate-800 mb-4 flex items-center space-x-2">
+              <BookOpen className="w-5 h-5 text-indigo-600" />
+              <span>单元高频词汇速览 (Vocabulary Reference)</span>
+            </h3>
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+              {[
+                { ch: '自助游', py: 'zìzhùyóu', en: 'self-guided tour' },
+                { ch: '跟团游', py: 'gēntuányóu', en: 'package tour' },
+                { ch: '名胜古迹', py: 'míngshèng gǔjì', en: 'scenic/historic sites' },
+                { ch: '自然风景', py: 'zìrán fēngjǐng', en: 'natural scenery' },
+                { ch: '交通工具', py: 'jiāotōng gōngjù', en: 'transportation' },
+                { ch: '网约车', py: 'wǎngyuēchē', en: 'online ride hailing' },
+                { ch: '靠窗/走道', py: 'kàochuāng/zǒudào', en: 'window/aisle seat' },
+                { ch: '特色民宿', py: 'tèsè mínsù', en: 'homestay / B&B' },
+                { ch: '快捷酒店', py: 'kuàijié jiǔdiàn', en: 'budget hotel' },
+                { ch: '吹牛', py: 'chuīniú', en: 'boast / brag' },
+                { ch: '中国通', py: 'Zhōngguótōng', en: 'China expert' },
+                { ch: '赶快', py: 'gǎnkuài', en: 'hurry up' },
+              ].map((item, idx) => (
+                <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-100 hover:border-indigo-200 hover:bg-indigo-50/40 transition">
+                  <div className="font-bold text-slate-800 text-sm">{item.ch}</div>
+                  <div className="text-[11px] text-indigo-600 font-medium">{item.py}</div>
+                  <div className="text-[10px] text-slate-500 truncate">{item.en}</div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function GrammarTab({ completed, onToggleComplete }) {
+      const [selectedGrammar, setSelectedGrammar] = useState(GRAMMAR_POINTS[0]);
+      const [userAnswer, setUserAnswer] = useState(null);
+      const [showExplanation, setShowExplanation] = useState(false);
+
+      const handleSelectOption = (idx) => {
+        setUserAnswer(idx);
+        setShowExplanation(true);
+      };
+
+      const handleGrammarChange = (item) => {
+        setSelectedGrammar(item);
+        setUserAnswer(null);
+        setShowExplanation(false);
+      };
+
+      return (
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 animate-fade-in">
+          <div className="lg:col-span-5 space-y-3">
+            <h3 className="text-lg font-bold text-slate-800 mb-2 flex items-center justify-between">
+              <span className="flex items-center space-x-2">
+                <Sparkles className="w-5 h-5 text-amber-500" />
+                <span>语法点列表 (7大关键口语)</span>
+              </span>
+              <span className="text-xs font-normal text-slate-500">点击查看详解</span>
+            </h3>
+            
+            {GRAMMAR_POINTS.map((item) => {
+              const isDone = completed.includes(item.id);
+              const isSelected = selectedGrammar.id === item.id;
+              return (
+                <div
+                  key={item.id}
+                  onClick={() => handleGrammarChange(item)}
+                  className={`p-4 rounded-2xl border transition cursor-pointer flex items-center justify-between ${
+                    isSelected
+                      ? 'bg-indigo-600 text-white border-indigo-600 shadow-md'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-indigo-300 hover:bg-indigo-50/30'
+                  }`}
+                >
+                  <div className="space-y-1">
+                    <div className="font-bold text-base flex items-center space-x-2">
+                      <span>{item.title}</span>
+                    </div>
+                    <div className={`text-xs ${isSelected ? 'text-indigo-200' : 'text-slate-500'}`}>
+                      {item.pinyin}
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onToggleComplete(item.id);
+                    }}
+                    className={`p-2 rounded-xl transition ${
+                      isDone
+                        ? isSelected ? 'bg-yellow-400 text-slate-900' : 'bg-emerald-100 text-emerald-600'
+                        : isSelected ? 'bg-indigo-700 text-indigo-300 hover:text-white' : 'bg-slate-100 text-slate-400 hover:text-slate-600'
+                    }`}
+                    title={isDone ? '标记为未掌握' : '标记为已掌握'}
+                  >
+                    <CheckCircle2 className="w-5 h-5" />
+                  </button>
+                </div>
+              );
+            })}
+          </div>
+
+          <div className="lg:col-span-7 space-y-6">
+            <div className="bg-white rounded-3xl p-6 border border-slate-200 shadow-sm space-y-6">
+              <div className="border-b border-slate-100 pb-4 flex justify-between items-start">
+                <div>
+                  <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-semibold">
+                    高频口语句型
+                  </span>
+                  <h2 className="text-2xl font-bold text-slate-800 mt-2">{selectedGrammar.title}</h2>
+                  <p className="text-sm text-indigo-600 font-medium">{selectedGrammar.pinyin}</p>
+                </div>
+                <button
+                  onClick={() => onToggleComplete(selectedGrammar.id)}
+                  className={`flex items-center space-x-1.5 px-4 py-2 rounded-xl text-xs font-bold transition ${
+                    completed.includes(selectedGrammar.id)
+                      ? 'bg-emerald-500 text-white shadow-sm'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  <CheckCircle2 className="w-4 h-4" />
+                  <span>{completed.includes(selectedGrammar.id) ? '已掌握' : '标记已掌握'}</span>
+                </button>
+              </div>
+
+              <div className="space-y-3">
+                <div className="bg-slate-50 p-4 rounded-2xl border border-slate-100">
+                  <h4 className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">功能含义 (Meaning)</h4>
+                  <p className="text-sm font-medium text-slate-700">{selectedGrammar.meaning}</p>
+                </div>
+                <div className="bg-indigo-50/50 p-4 rounded-2xl border border-indigo-100">
+                  <h4 className="text-xs font-bold text-indigo-400 uppercase tracking-wider mb-1">句型公式 (Pattern)</h4>
+                  <p className="text-sm font-mono font-bold text-indigo-800">{selectedGrammar.pattern}</p>
+                </div>
+              </div>
+
+              <div className="space-y-3">
+                <h4 className="text-sm font-bold text-slate-800 flex items-center space-x-1.5">
+                  <Volume2 className="w-4 h-4 text-indigo-600" />
+                  <span>例句示范 (Example Sentences)</span>
+                </h4>
+                <div className="space-y-2">
+                  {selectedGrammar.examples.map((ex, idx) => (
+                    <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-100 space-y-0.5">
+                      <div className="font-bold text-slate-800 text-sm">{ex.ch}</div>
+                      <div className="text-xs text-indigo-600 font-medium">{ex.py}</div>
+                      <div className="text-xs text-slate-500">{ex.en}</div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              <div className="border-t border-slate-100 pt-5 space-y-4">
+                <h4 className="text-sm font-bold text-slate-800 flex items-center space-x-2">
+                  <HelpCircle className="w-4 h-4 text-amber-500" />
+                  <span>即时随堂小练 (Quick Quiz)</span>
+                </h4>
+                <div className="bg-amber-50/40 p-4 rounded-2xl border border-amber-100 space-y-3">
+                  <p className="text-sm font-medium text-slate-800 whitespace-pre-line leading-relaxed">
+                    {selectedGrammar.exercise.question}
+                  </p>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    {selectedGrammar.exercise.options.map((opt, idx) => {
+                      const isCorrect = idx === selectedGrammar.exercise.answer;
+                      const isSelected = userAnswer === idx;
+                      let btnStyle = 'bg-white border-slate-200 text-slate-700 hover:border-indigo-300';
+                      
+                      if (showExplanation) {
+                        if (isCorrect) btnStyle = 'bg-emerald-500 text-white border-emerald-500 font-bold';
+                        else if (isSelected) btnStyle = 'bg-rose-500 text-white border-rose-500';
+                      }
+
+                      return (
+                        <button
+                          key={idx}
+                          onClick={() => handleSelectOption(idx)}
+                          className={`p-3 text-left rounded-xl border text-xs sm:text-sm transition ${btnStyle}`}
+                        >
+                          {opt}
+                        </button>
+                      );
+                    })}
+                  </div>
+
+                  {showExplanation && (
+                    <div className={`p-3 rounded-xl text-xs sm:text-sm flex items-center space-x-2 ${
+                      userAnswer === selectedGrammar.exercise.answer
+                        ? 'bg-emerald-100 text-emerald-800 font-medium'
+                        : 'bg-rose-100 text-rose-800 font-medium'
+                    }`}>
+                      {userAnswer === selectedGrammar.exercise.answer ? (
+                        <>
+                          <Check className="w-4 h-4 text-emerald-600" />
+                          <span>回答正确！非常棒！</span>
+                        </>
+                      ) : (
+                        <>
+                          <RefreshCw className="w-4 h-4 text-rose-600" />
+                          <span>再试一次，正确答案是：{selectedGrammar.exercise.options[selectedGrammar.exercise.answer]}</span>
+                        </>
+                      )}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function CultureTab() {
+      return (
+        <div className="space-y-8 animate-fade-in">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
+            <h2 className="text-2xl sm:text-3xl font-bold text-slate-800">中国著名景点与俗语表达</h2>
+            <p className="text-slate-600 text-sm">
+              地名、景点特色与口语俗语是汉语口语的重要表达要素
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {CITIES_AND_SAYINGS.map((item, idx) => (
+              <div 
+                key={idx}
+                className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-sm hover:shadow-lg transition-all duration-300 flex flex-col justify-between"
+              >
+                <div className={`p-6 text-white bg-gradient-to-r ${item.bg} relative`}>
+                  <span className="text-4xl absolute right-4 bottom-3 opacity-30">{item.icon}</span>
+                  <div className="text-xs text-white/80 font-medium uppercase">{item.pinyin}</div>
+                  <h3 className="text-2xl font-bold mt-1">{item.city}</h3>
+                </div>
+
+                <div className="p-6 space-y-4 flex-1 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <div className="bg-amber-50 border border-amber-200 p-3.5 rounded-2xl">
+                      <div className="text-xs text-amber-800 font-bold">经典俗语 (Famous Saying):</div>
+                      <div className="text-base font-extrabold text-slate-800 mt-1">“{item.saying}”</div>
+                      <div className="text-xs text-indigo-600 font-medium mt-0.5">{item.sayingPinyin}</div>
+                      <div className="text-xs text-slate-600 mt-1 italic">"{item.meaning}"</div>
+                    </div>
+
+                    <div className="space-y-1 pt-2">
+                      <div className="text-xs font-bold text-slate-400">主要特点 (Highlights):</div>
+                      <div className="flex flex-wrap gap-1.5">
+                        {item.features.map((feat, fIdx) => (
+                          <span key={fIdx} className="px-2.5 py-1 bg-slate-100 text-slate-700 rounded-lg text-xs font-medium">
+                            {feat}
+                          </span>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-indigo-100 p-6 rounded-3xl space-y-3">
+            <h3 className="font-bold text-indigo-900 flex items-center space-x-2">
+              <span>💡 口语表达小贴士 (Cultural & Oral Tip)</span>
+            </h3>
+            <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+              在口语表达中，常用句型 <strong>“A: 你知道中国的……吗？ B: 当然了。据说（jùshuō），……。”</strong> 来向他人推荐或介绍中国城市。例如：
+              <span className="block mt-1 font-medium text-indigo-800">
+                “家人们！据说‘桂林山水甲天下’，你一定要去桂林看看！”
+              </span>
+            </p>
+          </div>
+        </div>
+      );
+    }
+
+    function ScenariosTab() {
+      const [activeScenario, setActiveScenario] = useState(SCENARIOS[0]);
+
+      return (
+        <div className="space-y-8 animate-fade-in">
+          <div className="flex flex-wrap gap-3 justify-center">
+            {SCENARIOS.map((sc) => {
+              const Icon = sc.icon;
+              const isActive = activeScenario.id === sc.id;
+              return (
+                <button
+                  key={sc.id}
+                  onClick={() => setActiveScenario(sc)}
+                  className={`flex items-center space-x-2 px-5 py-3 rounded-2xl font-bold text-sm transition ${
+                    isActive
+                      ? 'bg-indigo-600 text-white shadow-md'
+                      : 'bg-white text-slate-700 border border-slate-200 hover:bg-slate-50'
+                  }`}
+                >
+                  <Icon className="w-4 h-4" />
+                  <span>{sc.title}</span>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+            <div>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-800">{activeScenario.title}</h2>
+              <p className="text-sm text-slate-500 mt-1">{activeScenario.description}</p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+              {activeScenario.cases.map((item, idx) => (
+                <div key={idx} className="bg-slate-50 border border-slate-200 rounded-2xl p-5 space-y-3 flex flex-col justify-between">
+                  <div className="space-y-2">
+                    <div className="inline-block px-3 py-1 bg-indigo-100 text-indigo-800 rounded-full text-xs font-bold">
+                      {item.user || item.type}
+                    </div>
+                    {item.desc && (
+                      <p className="text-xs sm:text-sm font-medium text-slate-800 italic bg-white p-3 rounded-xl border border-slate-100">
+                        {item.desc}
+                      </p>
+                    )}
+                    {item.feature && (
+                      <div className="text-xs text-slate-600">
+                        <span className="font-bold text-slate-700">特点：</span>{item.feature}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="space-y-1.5 border-t border-slate-200 pt-3">
+                    <div className="text-xs font-bold text-emerald-700 flex items-center space-x-1">
+                      <CheckCircle2 className="w-3.5 h-3.5" />
+                      <span>推荐：{item.recommendation || item.suitable}</span>
+                    </div>
+                    <div className="text-xs text-slate-500">
+                      {item.reason || item.quote}
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="bg-amber-50/60 border border-amber-200 p-5 rounded-2xl space-y-2">
+              <h4 className="font-bold text-amber-900 text-sm flex items-center space-x-2">
+                <span>🎭 互动口语练习对话框 (Roleplay Prompt)</span>
+              </h4>
+              <p className="text-xs sm:text-sm text-slate-700 leading-relaxed">
+                试着与同桌分角色练习对话：一名学生扮演旅行顾问 (Tour Guide)，其他学生扮演不同需求的顾客 (Customer A, B, C)，尝试运用句型 
+                <span className="font-bold text-indigo-700"> “想……就……” </span> 或 <span className="font-bold text-indigo-700"> “……就……吧” </span> 进行推荐！
+              </p>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function TextsTab() {
+      const [selectedText, setSelectedText] = useState(COURSE_TEXTS[0]);
+      const [showPinyin, setShowPinyin] = useState(true);
+      const [showEnglish, setShowEnglish] = useState(true);
+
+      return (
+        <div className="space-y-6 animate-fade-in">
+          <div className="bg-white p-4 rounded-2xl border border-slate-200 shadow-sm flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div className="flex items-center space-x-2 overflow-x-auto w-full sm:w-auto no-scrollbar">
+              {COURSE_TEXTS.map((t) => (
+                <button
+                  key={t.id}
+                  onClick={() => setSelectedText(t)}
+                  className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold whitespace-nowrap transition ${
+                    selectedText.id === t.id
+                      ? 'bg-indigo-600 text-white shadow'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                  }`}
+                >
+                  课文 {t.id}
+                </button>
+              ))}
+            </div>
+
+            <div className="flex items-center space-x-3 text-xs font-medium text-slate-600">
+              <button
+                onClick={() => setShowPinyin(!showPinyin)}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border transition ${
+                  showPinyin ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-200'
+                }`}
+              >
+                {showPinyin ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                <span>拼音 (Pinyin)</span>
+              </button>
+              <button
+                onClick={() => setShowEnglish(!showEnglish)}
+                className={`flex items-center space-x-1.5 px-3 py-1.5 rounded-lg border transition ${
+                  showEnglish ? 'bg-indigo-50 border-indigo-200 text-indigo-700' : 'bg-slate-50 border-slate-200'
+                }`}
+              >
+                {showEnglish ? <Eye className="w-3.5 h-3.5" /> : <EyeOff className="w-3.5 h-3.5" />}
+                <span>英文翻译 (English)</span>
+              </button>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+            <div>
+              {showPinyin && (
+                <p className="text-xs sm:text-sm text-indigo-600 font-medium mb-0.5">
+                  {selectedText.pinyinTitle}
+                </p>
+              )}
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-800">{selectedText.title}</h2>
+              <p className="text-xs text-slate-400 mt-1">对话人物：{selectedText.speaker}</p>
+            </div>
+
+            <div className="space-y-4">
+              {selectedText.content.map((line, idx) => (
+                <div key={idx} className="flex items-start space-x-3 group">
+                  <div className="w-12 h-12 rounded-2xl bg-indigo-100 text-indigo-700 font-bold flex items-center justify-center text-xs flex-shrink-0 mt-1">
+                    {line.speaker}
+                  </div>
+                  <div className="flex-1 bg-slate-50 p-4 rounded-2xl border border-slate-100 group-hover:border-indigo-200 group-hover:bg-indigo-50/20 transition space-y-1">
+                    {showPinyin && (
+                      <div className="text-xs text-indigo-600 font-medium">{line.py}</div>
+                    )}
+                    <div className="text-base font-bold text-slate-800">{line.ch}</div>
+                    {showEnglish && (
+                      <div className="text-xs text-slate-500 pt-0.5">{line.en}</div>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    function WorkshopTab() {
+      const [clozeValues, setClozeValues] = useState({
+        v1: '', v2: '', v3: '', v4: '', v5: '', v6: '', v7: ''
+      });
+      const [clozeScore, setClozeScore] = useState(null);
+
+      const [essay, setEssay] = useState({
+        destination: '杭州西湖',
+        transport: '乘坐高铁',
+        seat: '靠窗的位子',
+        accommodation: '特色民居',
+        activities: '自助游，想吃什么就吃什么，想玩多久就玩多久',
+        expectation: '留下美好的回忆'
+      });
+
+      const handleClozeCheck = () => {
+        const answers = {
+          v1: '开心',
+          v2: '好奇',
+          v3: '热情',
+          v4: '期待',
+          v5: '笑',
+          v6: '紧张',
+          v7: '高兴'
+        };
+        let correct = 0;
+        Object.keys(answers).forEach(k => {
+          if (clozeValues[k].trim() === answers[k]) correct++;
+        });
+        setClozeScore(correct);
+      };
+
+      return (
+        <div className="space-y-8 animate-fade-in">
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+            <div>
+              <span className="px-3 py-1 bg-purple-100 text-purple-800 rounded-full text-xs font-bold">
+                语法与叙事进阶
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mt-2">
+                练习一：从对话到故事改写 (Dialogue to Narrative)
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                学会使用逻辑连接词（有的……有的……，不但……而且……，……以后）和情绪副词填空。
+              </p>
+            </div>
+
+            <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 leading-loose text-sm sm:text-base text-slate-800 space-y-4">
+              <p>
+                学校马上就要放暑假了，大家都很【
+                <input
+                  type="text"
+                  value={clozeValues.v1}
+                  onChange={(e) => setClozeValues({ ...clozeValues, v1: e.target.value })}
+                  className="w-20 px-2 py-0.5 border border-indigo-300 rounded text-center text-indigo-700 font-bold focus:outline-none"
+                  placeholder="提示:开心"
+                />
+                】。王朋的同学有的想去暑期班学习，有的回家打工，还有的去公司实习。王朋告诉李友他要回北京看父母。李友对北京很有兴趣，她【
+                <input
+                  type="text"
+                  value={clozeValues.v2}
+                  onChange={(e) => setClozeValues({ ...clozeValues, v2: e.target.value })}
+                  className="w-20 px-2 py-0.5 border border-indigo-300 rounded text-center text-indigo-700 font-bold focus:outline-none"
+                  placeholder="提示:好奇"
+                />
+                】地问：“北京好玩吗？”王朋【
+                <input
+                  type="text"
+                  value={clozeValues.v3}
+                  onChange={(e) => setClozeValues({ ...clozeValues, v3: e.target.value })}
+                  className="w-20 px-2 py-0.5 border border-indigo-300 rounded text-center text-indigo-700 font-bold focus:outline-none"
+                  placeholder="提示:热情"
+                />
+                】地介绍说，北京是中国的首都，也是政治和文化中心。北京不但有很多名胜古迹，而且好吃的饭馆多得不得了。听了王朋的介绍以后，李友【
+                <input
+                  type="text"
+                  value={clozeValues.v4}
+                  onChange={(e) => setClozeValues({ ...clozeValues, v4: e.target.value })}
+                  className="w-20 px-2 py-0.5 border border-indigo-300 rounded text-center text-indigo-700 font-bold focus:outline-none"
+                  placeholder="提示:期待"
+                />
+                】地说：“太好了！要是能去北京就好了。”王朋【
+                <input
+                  type="text"
+                  value={clozeValues.v5}
+                  onChange={(e) => setClozeValues({ ...clozeValues, v5: e.target.value })}
+                  className="w-20 px-2 py-0.5 border border-indigo-300 rounded text-center text-indigo-700 font-bold focus:outline-none"
+                  placeholder="提示:笑"
+                />
+                】着说：“那你跟我一起去吧，我给你当导游。”可是李友想到还要去办签证，突然有点【
+                <input
+                  type="text"
+                  value={clozeValues.v6}
+                  onChange={(e) => setClozeValues({ ...clozeValues, v6: e.target.value })}
+                  className="w-20 px-2 py-0.5 border border-indigo-300 rounded text-center text-indigo-700 font-bold focus:outline-none"
+                  placeholder="提示:紧张"
+                />
+                】，她打算尽快去办。王朋【
+                <input
+                  type="text"
+                  value={clozeValues.v7}
+                  onChange={(e) => setClozeValues({ ...clozeValues, v7: e.target.value })}
+                  className="w-20 px-2 py-0.5 border border-indigo-300 rounded text-center text-indigo-700 font-bold focus:outline-none"
+                  placeholder="提示:高兴"
+                />
+                】地马上给旅行社打电话订机票。
+              </p>
+
+              <div className="flex items-center space-x-4 pt-2">
+                <button
+                  onClick={handleClozeCheck}
+                  className="px-5 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-bold rounded-xl text-xs sm:text-sm shadow transition"
+                >
+                  提交检查 (Check Answers)
+                </button>
+                {clozeScore !== null && (
+                  <span className="text-xs sm:text-sm font-bold text-emerald-600">
+                    得分：{clozeScore} / 7！
+                  </span>
+                )}
+              </div>
+            </div>
+          </div>
+
+          <div className="bg-white rounded-3xl p-6 sm:p-8 border border-slate-200 shadow-sm space-y-6">
+            <div>
+              <span className="px-3 py-1 bg-amber-100 text-amber-800 rounded-full text-xs font-bold">
+                作文大工坊
+              </span>
+              <h2 className="text-xl sm:text-2xl font-bold text-slate-800 mt-2">
+                练习二：以“我的旅行计划”为题完成200字短文
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 mt-1">
+                回答5个核心要素，自动生成系统化作文并提供语法自查清单。
+              </p>
+            </div>
+
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">1. 去哪儿？看什么？和谁去？</label>
+                  <input
+                    type="text"
+                    value={essay.destination}
+                    onChange={(e) => setEssay({ ...essay, destination: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">2. 怎么去？选什么座位？</label>
+                  <input
+                    type="text"
+                    value={essay.transport}
+                    onChange={(e) => setEssay({ ...essay, transport: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">3. 住哪里？有什么服务？</label>
+                  <input
+                    type="text"
+                    value={essay.accommodation}
+                    onChange={(e) => setEssay({ ...essay, accommodation: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">4. 怎么玩？跟团还是自助？</label>
+                  <input
+                    type="text"
+                    value={essay.activities}
+                    onChange={(e) => setEssay({ ...essay, activities: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-600 mb-1">5. 期待是什么？</label>
+                  <input
+                    type="text"
+                    value={essay.expectation}
+                    onChange={(e) => setEssay({ ...essay, expectation: e.target.value })}
+                    className="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                  />
+                </div>
+              </div>
+
+              <div className="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex flex-col justify-between space-y-4">
+                <div>
+                  <h4 className="font-bold text-slate-800 text-sm mb-3 flex items-center justify-between">
+                    <span>📄 自动生成作文示例 (Generated Essay)</span>
+                    <span className="text-xs text-indigo-600">约200字</span>
+                  </h4>
+                  <p className="text-sm leading-relaxed text-slate-700 whitespace-pre-line bg-white p-4 rounded-xl border border-slate-100 shadow-sm">
+                    暑假快要到了，我打算和朋友一起去{essay.destination}旅行。因为听说那里的风景美丽得不得了。为了节省时间，我们决定{essay.transport}去，而且我喜欢坐在{essay.seat}看风景。到了目的地以后，我们打算住在当地的{essay.accommodation}，虽然没有大酒店方便，但“不方便就不方便吧，能体验当地生活就行”。这次旅行我们选择{essay.activities}。幸亏我们提前订好了房间和车票。希望这次旅行能让我们{essay.expectation}！
+                  </p>
+                </div>
+
+                <div className="bg-emerald-50 border border-emerald-200 p-4 rounded-xl space-y-2">
+                  <div className="text-xs font-bold text-emerald-900">✅ 语法自查清单 (Grammar Checklist)</div>
+                  <ul className="text-xs text-emerald-800 space-y-1">
+                    <li>• 是否使用了 <code>想……就……</code> 或 <code>疑问词+就+疑问词</code>？</li>
+                    <li>• 是否包含了 <code>A就A吧</code> 或 <code>不得不</code> 表达妥协/无奈？</li>
+                    <li>• 是否使用了 <code>幸亏……(不然)</code> 表达幸运？</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
